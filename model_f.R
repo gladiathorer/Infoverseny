@@ -1,17 +1,18 @@
-# Title     : TODO
-# Objective : TODO
+# Title     : Feedforward Neural Network
+# Objective : Legyen kész
 # Created by: szpet
 # Created on: 4/30/2021
 library(keras)
 
-df <- read.csv('results_training.csv')
-df_t <- read.csv('results_testing.csv')
+df <- read.csv('results_train.csv')
+df_t <- read.csv(paste('results_', readline(prompt="Enter path for testing data: "), sep = ''))
 df <- subset(df,select = -c(hormone_therapy_0,adjuvant_chemotherapy_0))
 df_t <- subset(df_t,select = -c(hormone_therapy_0,adjuvant_chemotherapy_0))
 original <- read.csv('data.csv')
-train_x <- data.matrix(subset(df,select=-c(PFS_time_months,bcr_patient_uuid,X))[1:1500,])
-train_y <- data.matrix(subset(df,select=c(PFS_time_months))[1:1500,])
-patient_ids <- data.matrix(subset(df_t,select = bcr_patient_uuid))
+train_x <- data.matrix(subset(df,select=-c(PFS_time_months,bcr_patient_uuid,X)))
+train_y <- data.matrix(subset(df,select=c(PFS_time_months)))
+patient_ids <- subset(df_t,select = bcr_patient_uuid)
+patient_ids
 test_x <- data.matrix(subset(df_t,select=-c(PFS_time_months,bcr_patient_uuid,X)))
 test_y <- data.matrix(subset(df_t,select=c(PFS_time_months)))
 
@@ -29,7 +30,7 @@ model <- keras_model_sequential() %>%
     metrics = c("mae")
   )
 
-# train our model
+# train
 learn <- model %>% fit(
   x = train_x,
   y = train_y,
@@ -40,8 +41,8 @@ learn <- model %>% fit(
 )
 
 learn
-#output before flipping chemotheraphy
-output_before <- model %>% predict(test_x)*max(original[1500:1800,'OS_time_months'])
+#az eredeti kemoterápiás értékből(igen/nem) becsült DFS
+output_before <- model %>% predict(test_x)*max(original['OS_time_months'])
 for (i in seq(nrow(df_t))){
   if (test_x[,'adjuvant_chemotherapy_1'][i] == 0.99)
   {
@@ -52,8 +53,8 @@ for (i in seq(nrow(df_t))){
     test_x[,'adjuvant_chemotherapy_1'][i] = 0.99
   }
 }
-#output after flipping chemotheraphy
-output_after <- model %>% predict(test_x)*max(original[1500:1800,'OS_time_months'])
-
-dff <- data.frame(patient_ids,test_y*max(original[1500:1800,'OS_time_months']),output,output_after)
+#a megfordított kemoterápiás értékből(igen/nem) becsült DFS
+output_after <- model %>% predict(test_x)*max(original['OS_time_months'])
+dff <- data.frame(patient_ids,test_y*max(original['OS_time_months']),output_before,output_after)
+#az 'output.csv'-be írjuk ki
 write.csv(dff,'output.csv')
