@@ -2,18 +2,20 @@ Dependencies: Keras,Tensorflow
 
 Mit csinál?:
 Egy feedforward neurális háló, ami a bemeneti adatok alapján megpróbálja megállapítani betegenként a kijelölt végpontot: a PFS_time_months-ot.
-Majd miután megállapította, megnézi, hogy mi történne, ha a betegek az adott terápiát nem kapnák, vagy éppen kapnák és a kapott eredményeket kiírja egy .csv fájlba.
-A két esetet, akár beteg ID-nként innentől kezdve, könnyedén összelehet hasonlítani és ez hozzásegítheti az orvost a megfelelő döntés meghozásában.
+Majd miután megállapította, megnézi, hogy mi történne, ha a betegek az adott terápiát nem kapnák, vagy éppen kapnák
+és a kapott eredményeket kiírja egy 'output.csv' fájlba:{'Patient ID','PFS time months', 'Predicted PFS time months_before','Predicted PFS time months_after'}
+A két esetet, akár beteg ID-nként innentől kezdve, könnyedén összelehet hasonlítani a 'predicted pfs time' összehasonlításával
+és ez hozzásegítheti az orvost a megfelelő döntés meghozásában.
 Csak chemoterápiára lett implementálva.
 
 Leírás: 
 A repot vagy klónozni kell vagy betenni egy mappába az elemeit egyenként.
-Először a main.csv-t kell lefuttatni, itt meg kell adni a tesztelendő fájl nevét, csak akkor fog működni, ha TELJESEN UGYANOLYAN A FORMÁTUMA, mint az eredetinek!!
+Először a 'main.R'-t kell lefuttatni, itt meg kell adni a tesztelendő fájl nevét, csak akkor fog működni, ha TELJESEN UGYANOLYAN A FORMÁTUMA, mint az eredetinek!!
 Ez előkészíti az adatokat a megfelelő formába:
   a folytonos változókat 1 neuronra(tehát egy oszlopban marad) osztja, illetve a sigmoid fügvény értelmezési tartományára hozza(egyszerűen leosztok a maximummal, az adott oszlopban)
   a diszkrét változókat annyi neuronra osztja, amennyi egyedi érték van, majd ezekhez BOOL értéket rendel.
-Ezután a model_F.R-t lefuttatva megkapjuk a fennt leírt .csv fájlt.
+Ezután a 'model_F.R'-t lefuttatva megkapjuk a fennt leírt 'output.csv' fájlt.
 
 Fejlesztési lehetőségek:
-A neurális háló nincs optimalizálva
+A neurális háló nincs optimalizálva(a hyperparaméterek a programba vannak hardcodolva)
 Egy két diszkrét neuron szükségessége kérdéses
