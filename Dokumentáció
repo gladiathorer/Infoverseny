@@ -1,0 +1,3 @@
+Dependencies: Keras,Tensorflow
+
+Használat: a main.R-at kell először futtatni, majd a model_f.R-t
